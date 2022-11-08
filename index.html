@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Максим VS Влад</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Jost:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://unpkg.com/vue@next" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <h1>Максим VS Влад</h1>
+    </header>
+    <div id="game">
+      <section id="monster" class="container"
+      :class="{'d--none': winner === 'player'}"
+      >
+        <h2>Здоровье Влада</h2>
+        <img v-if="!winner" class="avatar" src="images/vlad.png" alt="">
+        <img v-else class="avatar" src="images/vlad-lost.png" alt="">
+        <div class="healthbar">
+          <div class="healthbar__value" :style="monsterBarStyles"></div>
+        </div>
+      </section>
+      <section id="player" class="container"
+      :class="{'d--none': winner === 'monster'}"
+      >
+        <h2>Здоровье Максима</h2>
+        <img v-if="!winner" class="avatar" src="images/max.png" alt="">
+        <img v-else class="avatar" src="images/max_lost.png" alt="">
+        <div class="healthbar">
+          <div class="healthbar__value" :style="playerBarStyles"></div>
+        </div>
+      </section>
+      <section class="container" v-if="winner">
+        <h2>Драка окончена!</h2>
+        <h3 v-if="winner === 'monster'">Тебе отпиздили рожу</h3>
+        <h3 v-else-if="winner === 'player'">Танцуй пляши, заявление пиши</h3>
+        <h3 v-else>It's a draw!</h3>
+        <button @click="startNewGame">Попробовать отпиздить еще раз</button>
+      </section>
+      <section id="controls" v-else>
+        <button @click="attackMonster">Наебнуть Владу</button>
+        <button :disabled="mayUseSpecialAttack" @click="specialAttackMonster">Сильно наебнуть Владу</button>
+        <button @click="healPlayer">Подкрепиться Пюропротеином</button>
+        <button @click="surrender">Не бей, лучше обоссы!</button>
+      </section>
+      <section id="log" class="container">
+        <h2>Ход поединка</h2>
+        <ul>
+          <li v-for="logMessage in logMessages">
+            <span :class="{'log--player': logMessage.actionBy === 'player', 'log--monster': logMessage.actionBy === 'monster'}">
+              {{ logMessage.actionBy === 'player' ? 'Максим' : 'Влад'}}
+            </span>
+            <span v-if="logMessage.actionType ==='heal'">
+              подкрепился Пюропротеином и восстановил <span class="log--heal">{{logMessage.actionValue}} здоровья</span>
+            </span>
+            <span v-else>
+              наебнул и отнял <span class="log--damage">{{logMessage.actionValue}} здоровья</span>
+            </span>
+          </li>
+        </ul>
+      </section>
+    </div>
+  </body>
+</html>
